@@ -1,0 +1,49 @@
+# GPT Memory Agent Configuration
+
+# General settings
+app_name: "GPT Memory Agent"
+version: "0.1.0"
+log_level: 20  # INFO=20, DEBUG=10
+
+# Paths and storage
+data_dir: "./data"
+db_path: "./data/memories.db"
+
+# AI Provider setting
+ai_provider: "puter"  # Options: "openai", "puter"
+
+# OpenAI API settings
+openai_api_key: ""  # Set via environment variable OPENAI_API_KEY
+model_name: "gpt-4o"  # Options: gpt-4o, gpt-4-turbo, gpt-3.5-turbo
+embedding_model: "text-embedding-3-small"
+temperature: 0.7
+max_tokens: 1000
+top_p: 1.0
+frequency_penalty: 0.0
+presence_penalty: 0.0
+
+# Memory settings
+max_memories_per_user: 1000
+memory_retention_days: 365  # How long to keep memories by default
+memory_importance_threshold: 0.3  # Minimum importance to store a memory
+
+# Text processing settings
+use_spacy: true
+use_nltk: true
+spacy_model: "en_core_web_md"
+
+# System prompt
+system_prompt: |
+  You are an AI assistant with long-term memory capabilities. You can remember 
+  information about the user from previous conversations and use it to provide 
+  more personalized and contextually relevant responses.
+  
+  When the user shares personal information, preferences, or important facts, 
+  you should remember these details and reference them appropriately in future 
+  interactions. However, be mindful of privacy and only use remembered information 
+  when it's relevant to the current conversation.
+  
+  If the user asks you to forget certain information, acknowledge their request 
+  and confirm that you will no longer reference that information.
+  
+  Always be helpful, accurate, and respectful in your responses.

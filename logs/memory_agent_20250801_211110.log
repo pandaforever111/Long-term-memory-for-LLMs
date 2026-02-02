@@ -1,0 +1,12 @@
+2025-08-01 21:11:10,255 - memory_agent.memory_store - INFO - Initializing database at C:\Users\Pro\Downloads\shram ai\shram-memory-agent\data\memories.db
+2025-08-01 21:11:10,279 - memory_agent.ai_client_factory - INFO - Creating OpenAI client
+2025-08-01 21:11:10,939 - memory_agent.openai_client - INFO - OpenAI client initialized successfully
+2025-08-01 21:11:10,940 - memory_agent.text_processor - INFO - Initializing spaCy NLP model
+2025-08-01 21:11:13,598 - memory_agent.text_processor - INFO - Initializing NLTK resources
+2025-08-01 21:11:14,076 - memory_agent - INFO - Memory agent initialized with openai AI provider
+2025-08-01 21:12:16,582 - memory_agent - INFO - Generating response for user test_user
+2025-08-01 21:12:16,583 - memory_agent - INFO - Processing message for user test_user
+2025-08-01 21:12:16,682 - memory_agent - INFO - Retrieving memories for user test_user with query: I use Shram and Magnet as productivity tools
+2025-08-01 21:12:16,700 - memory_agent.memory_store - INFO - Retrieving memories for user test_user with query: I use Shram and Magnet as productivity tools
+2025-08-01 21:12:16,708 - memory_agent.openai_client - INFO - Generating response with OpenAI API
+2025-08-01 21:12:20,434 - memory_agent.openai_client - ERROR - Error generating response with OpenAI API: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}

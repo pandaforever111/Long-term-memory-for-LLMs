@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puter.js Memory Agent Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .chat-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            height: 400px;
+            overflow-y: auto;
+        }
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .user-message {
+            background-color: #e6f7ff;
+            margin-left: 20px;
+        }
+        .ai-message {
+            background-color: #f2f2f2;
+            margin-right: 20px;
+        }
+        .input-container {
+            display: flex;
+            margin-top: 20px;
+        }
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .memory-container {
+            margin-top: 30px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .memory-item {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Puter.js Memory Agent Demo</h1>
+    
+    <div class="chat-container" id="chat-container">
+        <div class="message ai-message">
+            Hello! I'm your AI assistant with memory capabilities powered by Puter.js. How can I help you today?
+        </div>
+    </div>
+    
+    <div class="input-container">
+        <input type="text" id="user-input" placeholder="Type your message here...">
+        <button id="send-button">Send</button>
+        <button id="clear-button">Clear Chat</button>
+    </div>
+    
+    <div class="memory-container">
+        <h2>Stored Memories</h2>
+        <div id="memories-list">
+            <div class="memory-item">No memories stored yet.</div>
+        </div>
+    </div>
+
+    <!-- Include Puter.js -->
+    <script src="https://js.puter.com/v2/"></script>
+    
+    <script>
+        // DOM elements
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const clearButton = document.getElementById('clear-button');
+        const memoriesList = document.getElementById('memories-list');
+        
+        // Memory storage
+        let memories = [];
+        let userId = 'demo_user_' + Math.random().toString(36).substring(2, 10);
+        let conversationId = 'conv_' + Date.now();
+        
+        // Add event listeners
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        clearButton.addEventListener('click', clearChat);
+        
+        // Function to send a message
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            // Add user message to chat
+            addMessageToChat(message, 'user');
+            userInput.value = '';
+            
+            // Process message to extract potential memories
+            const extractedMemories = extractMemoryCandidates(message);
+            
+            // Store valid memories
+            for (const memory of extractedMemories) {
+                if (isValidMemory(memory)) {
+                    storeMemory(memory);
+                }
+            }
+            
+            // Retrieve relevant memories
+            const relevantMemories = retrieveMemories(message);
+            
+            // Format memories for prompt
+            const memoryContext = formatMemoriesForPrompt(relevantMemories);
+            
+            // Generate response using Puter.js
+            try {
+                const response = await generateResponse(message, memoryContext);
+                addMessageToChat(response, 'ai');
+            } catch (error) {
+                console.error('Error generating response:', error);
+                addMessageToChat('Sorry, I encountered an error. Please try again.', 'ai');
+            }
+        }
+        
+        // Function to add a message to the chat
+        function addMessageToChat(message, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
+            messageDiv.textContent = message;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // Function to clear the chat
+        function clearChat() {
+            chatContainer.innerHTML = '';
+            addMessageToChat('Chat cleared. How can I help you today?', 'ai');
+        }
+        
+        // Function to extract memory candidates from a message
+        function extractMemoryCandidates(message) {
+            // Simple implementation - in a real app, this would be more sophisticated
+            const sentences = message.split(/[.!?]\s+/);
+            return sentences.filter(s => s.trim().length > 10);
+        }
+        
+        // Function to determine if a candidate is a valid memory
+        function isValidMemory(candidate) {
+            // Simple implementation - in a real app, this would be more sophisticated
+            return candidate.includes('I') || candidate.includes('my') || 
+                   candidate.includes('me') || candidate.includes('we') || 
+                   candidate.includes('our');
+        }
+        
+        // Function to store a memory
+        function storeMemory(content) {
+            const memory = {
+                id: 'mem_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10),
+                content: content,
+                timestamp: new Date().toISOString(),
+                user_id: userId,
+                conversation_id: conversationId
+            };
+            
+            memories.push(memory);
+            updateMemoriesDisplay();
+        }
+        
+        // Function to retrieve relevant memories
+        function retrieveMemories(query) {
+            // Simple implementation - in a real app, this would use embeddings and similarity
+            const queryWords = query.toLowerCase().split(/\W+/);
+            return memories.filter(memory => {
+                const memoryWords = memory.content.toLowerCase().split(/\W+/);
+                return queryWords.some(word => 
+                    word.length > 3 && memoryWords.includes(word)
+                );
+            }).slice(0, 3); // Return top 3 matches
+        }
+        
+        // Function to format memories for prompt
+        function formatMemoriesForPrompt(memories) {
+            if (!memories.length) return "";
+            
+            const memoryStrings = memories.map(memory => `- ${memory.content}`);
+            return "Based on our previous conversations, I recall the following information about you:\n" + 
+                   memoryStrings.join('\n');
+        }
+        
+        // Function to generate a response using Puter.js
+        async function generateResponse(message, memoryContext) {
+            // Prepare system prompt
+            let systemPrompt = "You are an AI assistant with long-term memory capabilities.";
+            if (memoryContext) {
+                systemPrompt += "\n\n" + memoryContext;
+            }
+            
+            try {
+                // Call Puter.js OpenAI API
+                const response = await puter.ai.openai.createChatCompletion({
+                    model: "gpt-4o",
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: message }
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 1000,
+                    testMode: false // Set to true for testing without using API credits
+                });
+                
+                return response.choices[0].message.content;
+            } catch (error) {
+                console.error('Error calling Puter.js OpenAI API:', error);
+                throw error;
+            }
+        }
+        
+        // Function to update the memories display
+        function updateMemoriesDisplay() {
+            memoriesList.innerHTML = '';
+            
+            if (memories.length === 0) {
+                const noMemoriesDiv = document.createElement('div');
+                noMemoriesDiv.classList.add('memory-item');
+                noMemoriesDiv.textContent = 'No memories stored yet.';
+                memoriesList.appendChild(noMemoriesDiv);
+                return;
+            }
+            
+            for (const memory of memories) {
+                const memoryDiv = document.createElement('div');
+                memoryDiv.classList.add('memory-item');
+                memoryDiv.textContent = memory.content;
+                memoriesList.appendChild(memoryDiv);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+2025-08-01 20:15:52,663 - memory_agent.memory_store - INFO - Initializing database at C:\Users\Pro\Downloads\shram ai\shram-memory-agent\data\memories.db
+2025-08-01 20:15:54,010 - memory_agent.openai_client - INFO - OpenAI client initialized successfully
+2025-08-01 20:15:54,011 - memory_agent.text_processor - INFO - Initializing spaCy NLP model
+2025-08-01 20:15:54,013 - memory_agent.text_processor - WARNING - Failed to load spaCy model: [E050] Can't find model 'en_core_web_sm'. It doesn't seem to be a Python package or a valid path to a data directory.
+2025-08-01 20:15:54,014 - memory_agent.text_processor - WARNING - Falling back to basic text processing
+2025-08-01 20:15:54,015 - memory_agent.text_processor - INFO - Initializing NLTK resources
+2025-08-01 20:15:54,498 - memory_agent - INFO - Memory agent initialized
